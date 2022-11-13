@@ -36,7 +36,7 @@ with open('chapters.pickle', 'rb') as f:
     chapters = pickle.load(f)
 
 
-def download(problem_num, url, title, solution_slug):
+def download(problem_num, url, title, solution_slug=''):
     print(
         Fore.BLACK + Back.CYAN + f"Fetching problem num " + Back.YELLOW + f" {problem_num} " + Back.CYAN + " with url " + Back.YELLOW + f" {url} ")
     n = len(title)
@@ -86,14 +86,15 @@ def main():
     SLEEP_TIME_PER_PROBLEM_IN_SECOND = int(os.environ.get("SLEEP_TIME_PER_PROBLEM_IN_SECOND", 5))
 
     # Leetcode API URL to get json of problems on algorithms categories
-    ALGORITHMS_ENDPOINT_URL = "https://leetcode.com/api/problems/algorithms/"
+    ALGORITHMS_ENDPOINT_URL = "https://leetcode.cn/api/problems/algorithms/"
 
     # Problem URL is of format ALGORITHMS_BASE_URL + question__title_slug
     # If question__title_slug = "two-sum" then URL is https://leetcode.com/problems/two-sum
-    ALGORITHMS_BASE_URL = "https://leetcode.com/problems/"
+    ALGORITHMS_BASE_URL = "https://leetcode.cn/problems/"
 
     # Load JSON from API
     algorithms_problems_json = requests.get(ALGORITHMS_ENDPOINT_URL).content
+    print(algorithms_problems_json)
     algorithms_problems_json = json.loads(algorithms_problems_json)
 
     # List to store question_title_slug
@@ -102,12 +103,12 @@ def main():
         # Only process free problems
         if not child["paid_only"]:
             question__title_slug = child["stat"]["question__title_slug"]
-            question__article__slug = child["stat"]["question__article__slug"]
             question__title = child["stat"]["question__title"]
             frontend_question_id = child["stat"]["frontend_question_id"]
             difficulty = child["difficulty"]["level"]
-            links.append(
-                (question__title_slug, difficulty, frontend_question_id, question__title, question__article__slug))
+            if difficulty >= 3:
+                links.append(
+                    (question__title_slug, difficulty, frontend_question_id, question__title))
 
 
     
@@ -123,12 +124,12 @@ def main():
     downloaded_now = 0
     try:
         for i in range(completed_upto + 1, len(links)):
-            question__title_slug, _, frontend_question_id, question__title, question__article__slug = links[i]
+            question__title_slug, _, frontend_question_id, question__title = links[i]
             url = ALGORITHMS_BASE_URL + question__title_slug
             title = f"{frontend_question_id}. {question__title}"
 
             # Download each file as html and write chapter to chapters.pickle
-            download(i, url, title, question__article__slug)
+            download(i, url, title)
             downloaded_now += 1
 
             if downloaded_now == MAXIMUM_NUMBER_OF_PROBLEMS_PER_INSTANCE:
