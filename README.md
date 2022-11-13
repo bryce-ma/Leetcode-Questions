@@ -7,3 +7,9 @@ You can download [out.html](https://github.com/Bishalsarang/Leetcode-Questions/b
 
 You won't necessarily see the all the problems here.  If you want to download all the problems use [Leetcode Questions Scrapper](https://github.com/Bishalsarang/Leetcode-Questions-Scraper) in your system.
 You can view html preview  [here](https://bishalsarang.github.io/Leetcode-Questions/out.html)
+
+## Note:
+
+#### macos requirement
+
+`brew install cask chromedriver`

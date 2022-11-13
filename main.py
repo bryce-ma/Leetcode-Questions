@@ -56,7 +56,7 @@ def download(problem_num, url, title, solution_slug=''):
         title_decorator = '*' * n
         problem_title_html = title_decorator + f'<div id="title">{title}</div>' + '\n' + title_decorator
         problem_html = problem_title_html + str(
-            soup.find("div", {"class": "content__u3I1 question-content__JfgR"})) + '<br><br><hr><br>'
+            soup.find("div", {"class": "css-1rngd9y-ZoomWrapper e13l6k8o9"})) + '<br><br><hr><br>'
 
         # Append Contents to a HTML file
         with open("out.html", "ab") as f:
@@ -82,6 +82,7 @@ def download(problem_num, url, title, solution_slug=''):
 
 
 def main():
+    reset_configuration()
     MAXIMUM_NUMBER_OF_PROBLEMS_PER_INSTANCE = int(os.environ.get("MAXIMUM_NUMBER_OF_PROBLEMS", 400))
     SLEEP_TIME_PER_PROBLEM_IN_SECOND = int(os.environ.get("SLEEP_TIME_PER_PROBLEM_IN_SECOND", 5))
 
@@ -94,7 +95,6 @@ def main():
 
     # Load JSON from API
     algorithms_problems_json = requests.get(ALGORITHMS_ENDPOINT_URL).content
-    print(algorithms_problems_json)
     algorithms_problems_json = json.loads(algorithms_problems_json)
 
     # List to store question_title_slug
@@ -111,7 +111,7 @@ def main():
                     (question__title_slug, difficulty, frontend_question_id, question__title))
 
 
-    
+    print(f'complete upto {completed_upto}, will downloads {len(links)}')
     has_new_problems = (completed_upto != len(links) - 1)
     if has_new_problems:
         styles_str = "<style>pre{white-space:pre-wrap;background:#f7f9fa;padding:10px 15px;color:#263238;line-height:1.6;font-size:13px;border-radius:3px margin-top: 0;margin-bottom:1em;overflow:auto}b,strong{font-weight:bolder}#title{font-size:16px;color:#212121;font-weight:600;margin-bottom:10px}hr{height:10px;border:0;box-shadow:0 10px 10px -10px #8c8b8b inset}</style>"
