@@ -82,9 +82,9 @@ def download(problem_num, url, title, solution_slug=''):
 
 
 def main():
-    reset_configuration()
-    MAXIMUM_NUMBER_OF_PROBLEMS_PER_INSTANCE = int(os.environ.get("MAXIMUM_NUMBER_OF_PROBLEMS", 400))
-    SLEEP_TIME_PER_PROBLEM_IN_SECOND = int(os.environ.get("SLEEP_TIME_PER_PROBLEM_IN_SECOND", 5))
+    # reset_configuration()
+    MAXIMUM_NUMBER_OF_PROBLEMS_PER_INSTANCE = int(os.environ.get("MAXIMUM_NUMBER_OF_PROBLEMS", 100))
+    SLEEP_TIME_PER_PROBLEM_IN_SECOND = int(os.environ.get("SLEEP_TIME_PER_PROBLEM_IN_SECOND", 0))
 
     # Leetcode API URL to get json of problems on algorithms categories
     ALGORITHMS_ENDPOINT_URL = "https://leetcode.cn/api/problems/algorithms/"
@@ -120,7 +120,7 @@ def main():
             f.write(styles_str.encode(encoding="utf-8"))
     
     # Sort by difficulty follwed by problem id in ascending order
-    links = sorted(links, key=lambda x: (x[1], x[2]))
+    links.sort(key=lambda x: (x[1], len(x[2]), x[2]))
     downloaded_now = 0
     try:
         for i in range(completed_upto + 1, len(links)):
@@ -131,13 +131,14 @@ def main():
             # Download each file as html and write chapter to chapters.pickle
             download(i, url, title)
             downloaded_now += 1
+            print(f'problem {frontend_question_id} downloaded')
 
             if downloaded_now == MAXIMUM_NUMBER_OF_PROBLEMS_PER_INSTANCE:
                 break
             # Sleep for 5 secs for each problem and 2 mins after every 30 problems
             if i % 30 == 0:
                 print(f"Sleeping 120 secs\n")
-                time.sleep(120)
+                time.sleep(20)
             else:
                 print(f"Sleeping {SLEEP_TIME_PER_PROBLEM_IN_SECOND} secs\n")
                 time.sleep(SLEEP_TIME_PER_PROBLEM_IN_SECOND)
